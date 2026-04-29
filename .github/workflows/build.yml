@@ -32,6 +32,12 @@ jobs:
           cmake .. -DCMAKE_BUILD_TYPE=Release
           make -j$(nproc)
 
+      - name: Smoke test
+        run: |
+          export LD_LIBRARY_PATH=build:third_party/onnxruntime/lib:$LD_LIBRARY_PATH
+          ./build/totalseg_cli --help || true
+          echo "Build successful, binary runs"
+
       - name: Package
         run: |
           mkdir -p dist/include dist/lib dist/bin
@@ -58,13 +64,13 @@ jobs:
           New-Item -ItemType Directory -Force -Path third_party
           Invoke-WebRequest -Uri "https://github.com/microsoft/onnxruntime/releases/download/v1.22.0/onnxruntime-win-x64-1.22.0.zip" -OutFile "ort.zip"
           Expand-Archive -Path "ort.zip" -DestinationPath "."
-          Rename-Item "onnxruntime-win-x64-1.22.0" "third_party/onnxruntime"
+          Move-Item -Path "onnxruntime-win-x64-1.22.0" -Destination "third_party\onnxruntime"
 
       - name: Install NIfTI (vcpkg)
         shell: pwsh
         run: |
           vcpkg install nifticlib:x64-windows zlib:x64-windows
-          echo "CMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" >> $env:GITHUB_ENV
+          echo "CMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT\scripts\buildsystems\vcpkg.cmake" >> $env:GITHUB_ENV
 
       - name: Build
         shell: pwsh
@@ -73,16 +79,23 @@ jobs:
           cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE="$env:CMAKE_TOOLCHAIN_FILE"
           cmake --build . --config Release
 
+      - name: Smoke test
+        shell: pwsh
+        run: |
+          $env:PATH = "build\Release;third_party\onnxruntime\lib;$env:PATH"
+          .\build\Release\totalseg_cli.exe --help
+          Write-Host "Build successful, binary runs"
+
       - name: Package
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path dist/include, dist/lib, dist/bin
-          Copy-Item build/Release/totalseg.dll dist/lib/
-          Copy-Item build/Release/totalseg.lib dist/lib/
-          Copy-Item build/Release/totalseg_cli.exe dist/bin/
-          Copy-Item include/*.h dist/include/
-          Copy-Item models/*.json dist/
-          Compress-Archive -Path dist/* -DestinationPath libtotalseg-windows-x64.zip
+          New-Item -ItemType Directory -Force -Path dist\include, dist\lib, dist\bin
+          Copy-Item build\Release\totalseg.dll dist\lib\
+          Copy-Item build\Release\totalseg.lib dist\lib\
+          Copy-Item build\Release\totalseg_cli.exe dist\bin\
+          Copy-Item include\*.h dist\include\
+          Copy-Item models\*.json dist\
+          Compress-Archive -Path dist\* -DestinationPath libtotalseg-windows-x64.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
