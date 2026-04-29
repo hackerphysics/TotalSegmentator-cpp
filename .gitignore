@@ -1,0 +1,25 @@
+# Build
+build/
+cmake-build-*/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Dependencies (downloaded during build)
+third_party/
+
+# Model weights (download from GitHub Releases)
+models/onnx/*.onnx
+models/onnx/*.onnx.data
+models/weights/
+
+# Test data & ground truth (too large for git)
+tests/ground_truth/
+tests/*.nii.gz
+tests/multi_test_data/
+
+# OS
+.DS_Store
+Thumbs.db
