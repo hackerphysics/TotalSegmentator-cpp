@@ -35,7 +35,12 @@ struct OnnxModel::Impl {
 #endif
         }
 
+#ifdef _WIN32
+        std::wstring wpath(model_path.begin(), model_path.end());
+        session = Ort::Session(env, wpath.c_str(), opts);
+#else
         session = Ort::Session(env, model_path.c_str(), opts);
+#endif
 
         // Get input name
         auto in_name = session.GetInputNameAllocated(0, allocator);

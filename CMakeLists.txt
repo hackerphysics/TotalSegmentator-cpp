@@ -9,9 +9,24 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(ONNXRUNTIME_DIR "${CMAKE_SOURCE_DIR}/third_party/onnxruntime")
 find_library(ONNXRUNTIME_LIB onnxruntime PATHS "${ONNXRUNTIME_DIR}/lib" REQUIRED)
 
-# ── nifticlib (system, manual) ──
-set(NIFTI_INCLUDE_DIRS /usr/include/nifti)
-set(NIFTI_LIBRARIES nifti2 znz)
+# ── nifticlib ──
+find_path(NIFTI_INCLUDE_DIRS nifti2_io.h
+    PATH_SUFFIXES nifti
+    PATHS /usr/include /usr/local/include
+)
+find_library(NIFTI2_LIB NAMES nifti2)
+find_library(ZNZ_LIB NAMES znz)
+if(NIFTI2_LIB AND ZNZ_LIB)
+    set(NIFTI_LIBRARIES ${NIFTI2_LIB} ${ZNZ_LIB})
+else()
+    # vcpkg or other package managers
+    find_package(NIFTI QUIET CONFIG)
+    if(NIFTI_FOUND)
+        set(NIFTI_LIBRARIES NIFTI::nifti2 NIFTI::znz)
+    else()
+        message(FATAL_ERROR "NIfTI library not found")
+    endif()
+endif()
 
 # ── zlib ──
 find_package(ZLIB REQUIRED)

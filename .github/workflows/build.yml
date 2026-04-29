@@ -69,7 +69,7 @@ jobs:
       - name: Install NIfTI (vcpkg)
         shell: pwsh
         run: |
-          vcpkg install nifticlib:x64-windows zlib:x64-windows
+          vcpkg install "nifticlib[nifti2]:x64-windows" zlib:x64-windows
           echo "CMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT\scripts\buildsystems\vcpkg.cmake" >> $env:GITHUB_ENV
 
       - name: Build
