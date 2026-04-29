@@ -21,6 +21,7 @@ jobs:
 
       - name: Download ONNX Runtime
         run: |
+          mkdir -p third_party
           wget -q https://github.com/microsoft/onnxruntime/releases/download/v1.22.0/onnxruntime-linux-x64-1.22.0.tgz
           tar xzf onnxruntime-linux-x64-1.22.0.tgz
           mv onnxruntime-linux-x64-1.22.0 third_party/onnxruntime
@@ -54,6 +55,7 @@ jobs:
       - name: Download ONNX Runtime
         shell: pwsh
         run: |
+          New-Item -ItemType Directory -Force -Path third_party
           Invoke-WebRequest -Uri "https://github.com/microsoft/onnxruntime/releases/download/v1.22.0/onnxruntime-win-x64-1.22.0.zip" -OutFile "ort.zip"
           Expand-Archive -Path "ort.zip" -DestinationPath "."
           Rename-Item "onnxruntime-win-x64-1.22.0" "third_party/onnxruntime"
