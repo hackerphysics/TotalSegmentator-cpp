@@ -2,8 +2,12 @@
 #include <iostream>
 
 int main(int argc, char* argv[]) {
+    if (argc == 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
+        std::cout << "Usage: totalseg_cli <input.nii.gz> <output.nii.gz> <model_dir> [--fast] [--gpu]\n";
+        return 0;
+    }
     if (argc < 4) {
-        std::cerr << "Usage: totalseg_cli <input.nii.gz> <output.nii.gz> <model_dir>\n";
+        std::cerr << "Usage: totalseg_cli <input.nii.gz> <output.nii.gz> <model_dir> [--fast] [--gpu]\n";
         return 1;
     }
     totalseg::PipelineConfig config;
