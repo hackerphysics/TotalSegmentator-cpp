@@ -1,6 +1,15 @@
 # Build
 build/
+build-*/
 cmake-build-*/
+
+# Local packaging and validation outputs
+dist-*/
+package-*/
+release-test/
+release-upload/
+real-test/
+tmp-smoke/
 
 # IDE
 .idea/
