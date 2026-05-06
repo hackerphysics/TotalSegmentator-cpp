@@ -89,11 +89,7 @@ jobs:
       - name: Package
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path dist\include, dist\lib, dist\bin
-          Copy-Item build\Release\totalseg.dll dist\lib\
-          Copy-Item build\Release\totalseg.lib dist\lib\
-          Copy-Item build\Release\totalseg_cli.exe dist\bin\
-          Copy-Item include\*.h dist\include\
+          cmake --install build --config Release --prefix dist
           Copy-Item models\*.json dist\
           Compress-Archive -Path dist\* -DestinationPath libtotalseg-windows-x64.zip
 

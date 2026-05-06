@@ -13,9 +13,8 @@ namespace totalseg {
 // nnUNet patch sizes per task (Z, Y, X) — from TotalSegmentator model configs.
 static std::array<int, 3> get_patch_size(int task_id, bool fast) {
     // All "total" subtasks use the same nnUNet patch size.
-    if (fast) {
-        return {48, 48, 48};
-    }
+    (void)task_id;
+    (void)fast;
     return {128, 128, 128};
 }
 
